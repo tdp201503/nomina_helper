@@ -200,31 +200,31 @@ class NominaHelperProcessor:
         self.log_utils.guardar_log("Guardando liquidacion...")
         for liquidacion_empleado in liquidaciones_empleados:
             contenido_linea = (
-                liquidacion_empleado.empleado.id, # Id empleado
-                liquidacion_empleado.empleado.nombre, # Nombre empleado
-                liquidacion_empleado.empleado.cargo, # Cargo empleado
-                int(liquidacion_empleado.empleado.salario), # Salario base
-                liquidacion_empleado.nomina_empleado.valor_auxilio_transporte, # Aporte auxilio de transporte efectivo.
-                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.cesantias, # Aporte cesantias
-                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.interes_cesantias, # Aporte intereses sobre cesantias
-                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.prima_servicios, # Aporte prima
-                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.vacaciones, # Aporte vacaciones
-                liquidacion_empleado.nomina_empleado.apropiacion.seguridad_social.arl, # Aporte arl
-                liquidacion_empleado.nomina_empleado.apropiacion.seguridad_social.salud_empresa, # Aporte salud empresa
-                liquidacion_empleado.nomina_empleado.apropiacion.seguridad_social.pension_empresa, # Aporte pension empresa
-                liquidacion_empleado.nomina_empleado.apropiacion.aporte_parafiscal.sena, # Aporte SENA
-                liquidacion_empleado.nomina_empleado.apropiacion.aporte_parafiscal.icbf, # Aporte ICBF
-                liquidacion_empleado.nomina_empleado.apropiacion.aporte_parafiscal.cajas, # Aporte Cajas de Compensacion
-                liquidacion_empleado.nomina_empleado.deduccion.salud_empleado, # Aporte salud empleado
-                liquidacion_empleado.nomina_empleado.deduccion.pension_empleado, # Aporte pension empleado
-                liquidacion_empleado.nomina_empleado.deduccion.aporte_fondo_solidaridad, # Aporte fondo de solidaridad
-                liquidacion_empleado.salario_neto, # Salario neto para el empleado
+                liquidacion_empleado.empleado.id,  # Id empleado
+                liquidacion_empleado.empleado.nombre,  # Nombre empleado
+                liquidacion_empleado.empleado.cargo,  # Cargo empleado
+                int(liquidacion_empleado.empleado.salario),  # Salario base
+                liquidacion_empleado.nomina_empleado.valor_auxilio_transporte,  # Aporte auxilio de transporte efectivo.
+                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.cesantias,  # Aporte cesantias
+                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.interes_cesantias,  # Aporte intereses sobre cesantias
+                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.prima_servicios,  # Aporte prima
+                liquidacion_empleado.nomina_empleado.apropiacion.prestacion_social.vacaciones,  # Aporte vacaciones
+                liquidacion_empleado.nomina_empleado.apropiacion.seguridad_social.arl,  # Aporte arl
+                liquidacion_empleado.nomina_empleado.apropiacion.seguridad_social.salud_empresa,  # Aporte salud empresa
+                liquidacion_empleado.nomina_empleado.apropiacion.seguridad_social.pension_empresa,  # Aporte pension empresa
+                liquidacion_empleado.nomina_empleado.apropiacion.aporte_parafiscal.sena,  # Aporte SENA
+                liquidacion_empleado.nomina_empleado.apropiacion.aporte_parafiscal.icbf,  # Aporte ICBF
+                liquidacion_empleado.nomina_empleado.apropiacion.aporte_parafiscal.cajas,  # Aporte Cajas de Compensacion
+                liquidacion_empleado.nomina_empleado.deduccion.salud_empleado,  # Aporte salud empleado
+                liquidacion_empleado.nomina_empleado.deduccion.pension_empleado,  # Aporte pension empleado
+                liquidacion_empleado.nomina_empleado.deduccion.aporte_fondo_solidaridad,  # Aporte fondo de solidaridad
+                liquidacion_empleado.salario_neto,  # Salario neto para el empleado
                 liquidacion_empleado.costo_empresa # Costo total para la empresa
             )
 
             formato_linea = "Id: %d " \
                             "Nombre: %s " \
-                            "Cargo: %s" \
+                            "Cargo: %s " \
                             "Salario base: %.2f " \
                             "Auxilio de Transporte: %.2f " \
                             "Apropiaciones -> " \

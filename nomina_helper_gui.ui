@@ -30,45 +30,24 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="mensaje_progreso">
-              <property name="text">
-               <string>Mensaje de estado ...</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>50</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QProgressBar" name="barra_progreso">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>400</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="value">
-               <number>24</number>
+               <number>0</number>
               </property>
              </widget>
             </item>
@@ -77,13 +56,32 @@
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="mensaje_progreso">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -405,7 +403,7 @@
             <item row="6" column="1">
              <widget class="QLineEdit" name="tope_auxilio_transporte">
               <property name="enabled">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="readOnly">
                <bool>true</bool>
@@ -414,6 +412,9 @@
             </item>
             <item row="7" column="1">
              <widget class="QLineEdit" name="tope_fondo_solidaridad">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="readOnly">
                <bool>true</bool>
               </property>
@@ -466,7 +467,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="aplicar_cambios">
+             <widget class="QPushButton" name="boton_aplicar_cambios">
               <property name="text">
                <string>Aplicar Cambios</string>
               </property>
@@ -486,7 +487,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="cargar_valores_defecto">
+             <widget class="QPushButton" name="boton_cargar_valores_defecto">
               <property name="text">
                <string>Valores por Defecto</string>
               </property>
