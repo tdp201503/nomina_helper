@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from nomina_helper_gui import Ui_MainWindow
 from modelo.nomina import *
+from nomina_helper_processor import NominaHelperProcessor
 
 
 class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
@@ -9,10 +10,9 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.setupUi(self)
         self.configuracion_nomina = configuracion_por_defecto
+        self.processor = NominaHelperProcessor(configuracion_por_defecto)
         self.empleados = []
-        self.apropiaciones = []
-        self.deducciones = []
-        self.liquidaciones = []
+        self.nominas_empleados = []
 
         self.tabla_empleados_inicializada = False
         self.tabla_apropiaciones_inicializada = False
@@ -27,8 +27,7 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
         self.boton_guardar_liquidacion.clicked.connect(self.guardar_liquidacion)
 
         self.tabla_empleados.selectionModel().selectionChanged.connect(self.empleado_seleccionado)
-
-    # self.connect(self.tabla_empleados.selectionModel(), QtCore.SIGNAL("selectionChanged()"), self.empleado_seleccionado)
+        #self.connect(self.tabla_empleados.selectionModel(), QtCore.SIGNAL("selectionChanged()"), self.empleado_seleccionado)
 
     def cargar_empleados(self, ruta_nomina):
         archivo_nomina = open(ruta_nomina, 'r')
@@ -44,7 +43,7 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
             # print "Leyendo empleado " + str(i) + ": " + empleado
             campos_empleado = linea_empleado.split("*")
 
-            self.empleados.append(Empleado(i, campos_empleado[0], campos_empleado[1], campos_empleado[2]))
+            self.empleados.append(Empleado(i, campos_empleado[0], int(campos_empleado[1]), campos_empleado[2]))
 
     def inicializar_tabla_empleados(self):
         encabezados_tabla_empleados = QtCore.QStringList()
@@ -70,7 +69,7 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
             item_nombre.setTextAlignment(QtCore.Qt.AlignLeft)
             self.tabla_empleados.setItem(empleado.id, 0, item_nombre)
 
-            item_salario = QtGui.QTableWidgetItem(empleado.salario)
+            item_salario = QtGui.QTableWidgetItem(str(empleado.salario))
             item_salario.setTextAlignment(QtCore.Qt.AlignRight)
             self.tabla_empleados.setItem(empleado.id, 1, item_salario)
 
@@ -85,7 +84,7 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
     def cargar_archivo(self):
         ruta_nomina = QtGui.QFileDialog.getOpenFileName(self, 'Cargar archivo de nomina', '.',
                                                         "Archivos de nomina (*.txt)")
-        self.text = self.ruta_archivo_nomina.setText(ruta_nomina)
+        self.ruta_archivo_nomina.setText(ruta_nomina)
 
         self.cargar_empleados(ruta_nomina)
         self.actualizar_tabla_empleados()
@@ -93,11 +92,16 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
 
     def calcular_nomina(self):
         print "Calculando nomina..."
+
+        for empleado in self.empleados:
+            self.nominas_empleados.append(self.processor.calcular_nomina(empleado))
+
         self.tabla_apropiaciones.setEnabled(True)
         self.tabla_deducciones.setEnabled(True)
         self.tabla_liquidacion.setEnabled(True)
-
         self.boton_guardar_liquidacion.setEnabled(True)
+
+        self.nomina_calculada = True
 
     def inicializar_tabla_apropiaciones(self):
         encabezados_tabla_apropiaciones = QtCore.QStringList()
@@ -122,49 +126,53 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
         self.tabla_apropiaciones.setItem(9, 0, QtGui.QTableWidgetItem("PS - Prima"))
 
     def actualizar_tabla_apropiaciones(self, empleado):
-        if (self.tabla_apropiaciones_inicializada == False):
+        if not self.nomina_calculada:
+            print "Calcular nomina primero!"
+            return
+
+        if not self.tabla_apropiaciones_inicializada:
             self.inicializar_tabla_apropiaciones();
             self.tabla_apropiaciones_inicializada = True
 
-        apropiacion = self.apropiaciones[empleado.id]
+        apropiacion = self.nominas_empleados[empleado.id].apropiacion
 
-        item_ss_salud_empresa = QtGui.QTableWidgetItem(apropiacion.seguridad_social.salud_empresa)
+        item_ss_salud_empresa = QtGui.QTableWidgetItem(str(apropiacion.seguridad_social.salud_empresa))
         item_ss_salud_empresa.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(0, 1, item_ss_salud_empresa)
 
-        item_ss_pension_empresa = QtGui.QTableWidgetItem(apropiacion.seguridad_social.pension_empresa)
+        item_ss_pension_empresa = QtGui.QTableWidgetItem(str(apropiacion.seguridad_social.pension_empresa))
         item_ss_pension_empresa.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(1, 1, item_ss_pension_empresa)
 
-        item_ss_arl = QtGui.QTableWidgetItem(str(cur_row))
+        item_ss_arl = QtGui.QTableWidgetItem(str(apropiacion.seguridad_social.arl))
         item_ss_arl.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(2, 1, item_ss_arl)
 
-        item_ap_sena = QtGui.QTableWidgetItem(str(cur_row))
+        item_ap_sena = QtGui.QTableWidgetItem(str(apropiacion.aporte_parafiscal.sena))
         item_ap_sena.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(3, 1, item_ap_sena)
 
-        item_ap_icbf = QtGui.QTableWidgetItem(str(cur_row))
+        item_ap_icbf = QtGui.QTableWidgetItem(str(apropiacion.aporte_parafiscal.icbf))
         item_ap_icbf.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(4, 1, item_ap_icbf)
 
-        item_ap_cajas = QtGui.QTableWidgetItem(str(cur_row))
+        item_ap_cajas = QtGui.QTableWidgetItem(str(apropiacion.aporte_parafiscal.cajas))
         item_ap_cajas.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(5, 1, item_ap_cajas)
 
-        item_ps_cesantias = QtGui.QTableWidgetItem(str(cur_row))
+        item_ps_cesantias = QtGui.QTableWidgetItem(str(apropiacion.prestacion_social.cesantias))
         item_ps_cesantias.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(6, 1, item_ps_cesantias)
 
-        item_ps_intereses = QtGui.QTableWidgetItem(str(cur_row))
+        item_ps_intereses = QtGui.QTableWidgetItem(str(apropiacion.prestacion_social.interes_cesantias))
         item_ps_intereses.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(7, 1, item_ps_intereses)
 
-        item_ps_vacaciones = QtGui.QTableWidgetItem(str(cur_row))
+        item_ps_vacaciones = QtGui.QTableWidgetItem(str(apropiacion.prestacion_social.vacaciones))
         item_ps_vacaciones.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(8, 1, item_ps_vacaciones)
 
-        item_ps_prima = QtGui.QTableWidgetItem(str(cur_row))
+        item_ps_prima = QtGui.QTableWidgetItem(str(apropiacion.prestacion_social.prima_servicios))
         item_ps_prima.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.tabla_apropiaciones.setItem(9, 1, item_ps_prima)
 
@@ -176,7 +184,7 @@ class NominaHelper(QtGui.QMainWindow, Ui_MainWindow):
         cur_row = cur_index.row()
 
         print "cur_row = " + str(cur_row)
-        print "Selected: " + self.empleados[cur_row]
+        print "Selected: " + self.empleados[cur_row].nombre + " - Id: " + str(self.empleados[cur_row].id)
 
         self.actualizar_tabla_apropiaciones(self.empleados[cur_row])
 

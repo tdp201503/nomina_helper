@@ -1,3 +1,1 @@
-__all__ = [
-	"nomina",
-	"configuracion_nomina"]
+__all__ = ["nomina", "configuracion_nomina"]
